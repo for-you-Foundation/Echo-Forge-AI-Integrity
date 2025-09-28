@@ -1,0 +1,132 @@
+name: Deploy Echo Forge-AI Integrity Dashboard
+
+on:
+  push:
+    branches: [ main, copilot/* ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run daily at 06:00 UTC to refresh dashboard with latest data
+    - cron: '0 6 * * *'
+  workflow_dispatch:
+    # Allow manual triggering
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow only one concurrent deployment
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install Python dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f dialects/python/requirements.txt ]; then
+          pip install -r dialects/python/requirements.txt
+        fi
+        
+    - name: Make scripts executable
+      run: |
+        chmod +x dialects/bash/*.sh
+        
+    - name: Run core verification system
+      run: |
+        echo "Running core verification..."
+        python3 verification/core_verifier.py
+        
+    - name: Run Python dialect processor
+      run: |
+        echo "Running Python dialect processor..."
+        python3 dialects/python/processor.py
+        
+    - name: Run Bash dialect processor
+      run: |
+        echo "Running Bash dialect processor..."
+        ./dialects/bash/processor.sh "$PWD"
+        
+    - name: Run Markdown dialect processor
+      run: |
+        echo "Running Markdown dialect processor..."
+        python3 dialects/markdown/processor.py
+        
+    - name: Run HTML dialect processor
+      run: |
+        echo "Running HTML dialect processor..."
+        python3 dialects/html/processor.py
+        
+    - name: Verify generated reports
+      run: |
+        echo "Verifying generated reports..."
+        find reports -name "*.csv" -exec echo "CSV: {}" \;
+        find reports -name "*.md" -exec echo "Markdown: {}" \;
+        find reports -name "*.html" -exec echo "HTML: {}" \;
+        find reports -name "*.sha256" -exec echo "Checksum: {}" \;
+        
+    - name: Validate checksums
+      run: |
+        echo "Validating checksums..."
+        for checksum_file in $(find reports -name "*.sha256"); do
+          echo "Validating: $checksum_file"
+          if [ -f "$checksum_file" ]; then
+            cd "$(dirname "$checksum_file")"
+            if sha256sum -c "$(basename "$checksum_file")" --quiet; then
+              echo "✅ Checksum valid: $(basename "$checksum_file")"
+            else
+              echo "❌ Checksum invalid: $(basename "$checksum_file")"
+              exit 1
+            fi
+            cd - > /dev/null
+          fi
+        done
+        
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+      
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: 'docs'
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
+        
+  notification:
+    runs-on: ubuntu-latest
+    needs: [build-and-test, deploy]
+    if: always()
+    steps:
+      - name: Report deployment status
+        run: |
+          if [ "${{ needs.build-and-test.result }}" == "success" ] && [ "${{ needs.deploy.result }}" == "success" ]; then
+            echo "✅ Echo Forge-AI Integrity Dashboard deployed successfully!"
+            echo "🌐 Dashboard URL: https://jHu9xSA7Tyqv.github.io/Echo-Forge-AI-Integrity"
+            echo "📊 Lineage: RepoReportEcho_092425"
+          else
+            echo "❌ Deployment failed!"
+            echo "Build status: ${{ needs.build-and-test.result }}"
+            echo "Deploy status: ${{ needs.deploy.result }}"
+          fi

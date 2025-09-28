@@ -1,0 +1,21 @@
+{
+  "generated_by": "HTML Dialect Processor",
+  "timestamp": "2025-09-28T06:01:14.462388",
+  "lineage_id": "RepoReportEcho_092425",
+  "generated_files": {
+    "dashboard": "docs/index.html",
+    "config": "_config.yml",
+    "docs_readme": "docs/README.md"
+  },
+  "checksums": {
+    "dashboard": "6ba04dedf7305359b096065f5368a95eed16d84aaad45224c825f7ff84fee59e",
+    "config": "90a8a128d022f774beeee00cfed6ae49702669ba4d0ffcce98da7dcfe22f7b54"
+  },
+  "statistics": {
+    "cve_records_processed": 3,
+    "verification_results": 3,
+    "dashboard_size_bytes": 24947,
+    "github_pages_ready": true
+  },
+  "status": "SUCCESS"
+}

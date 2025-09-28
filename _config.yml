@@ -1,0 +1,43 @@
+# GitHub Pages Configuration for Echo Forge-AI Integrity
+theme: minima
+title: "Echo Forge-AI Integrity Dashboard"
+description: "Multi-Agent Verification System for AI-Native Integrity"
+url: "https://jHu9xSA7Tyqv.github.io"
+baseurl: "/Echo-Forge-AI-Integrity"
+
+# GitHub Pages settings
+repository: "jHu9xSA7Tyqv/Echo-Forge-AI-Integrity"
+author: "Echo Forge-AI Integrity System"
+
+# Navigation
+navigation:
+  - title: "Dashboard"
+    url: "/index.html"
+  - title: "Reports"
+    url: "/reports/"
+  - title: "Documentation"
+    url: "/docs/"
+
+# Build settings
+markdown: kramdown
+highlighter: rouge
+plugins:
+  - jekyll-feed
+  - jekyll-sitemap
+
+# Exclude from processing
+exclude:
+  - verification/
+  - dialects/
+  - data/
+  - "*.py"
+  - "*.sh"
+  - "*.ps1"
+  - requirements.txt
+  - .gitignore
+  - README.md
+
+# Include in processing
+include:
+  - _pages
+  - assets

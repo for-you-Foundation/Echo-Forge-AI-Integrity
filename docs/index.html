@@ -1,0 +1,823 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Echo Forge-AI Integrity Dashboard - RepoReportEcho_092425</title>
+    <style>
+
+/* Echo Forge-AI Integrity Dashboard Styles */
+:root {
+    --primary-color: #007acc;
+    --secondary-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --dark-color: #343a40;
+    --light-color: #f8f9fa;
+    --success-color: #28a745;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background-color: #f5f5f5;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Header Styles */
+.header {
+    background: linear-gradient(135deg, var(--primary-color), var(--info-color));
+    color: white;
+    padding: 2rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 300;
+}
+
+.header .subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+}
+
+.lineage-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.2);
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    margin-top: 1rem;
+}
+
+/* Navigation */
+.nav-tabs {
+    display: flex;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 2rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.nav-tab {
+    flex: 1;
+    padding: 1rem;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    background: white;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.nav-tab:hover {
+    background-color: #f8f9fa;
+}
+
+.nav-tab.active {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Content Panels */
+.tab-content {
+    display: none;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Cards */
+.card {
+    background: white;
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+}
+
+.card-header {
+    border-bottom: 2px solid #eee;
+    padding-bottom: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-title {
+    font-size: 1.3rem;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+/* Statistics Grid */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    transition: transform 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.stat-critical { color: var(--danger-color); }
+.stat-high { color: #fd7e14; }
+.stat-medium { color: var(--warning-color); }
+.stat-low { color: var(--success-color); }
+.stat-info { color: var(--info-color); }
+
+/* Tables */
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.data-table th,
+.data-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.data-table th {
+    background-color: var(--primary-color);
+    color: white;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+}
+
+.data-table tr:hover {
+    background-color: #f8f9fa;
+}
+
+/* Status indicators */
+.status-valid {
+    color: var(--success-color);
+    font-weight: bold;
+}
+
+.status-invalid {
+    color: var(--danger-color);
+    font-weight: bold;
+}
+
+/* Severity badges */
+.severity-badge {
+    display: inline-block;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.severity-critical {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.severity-high {
+    background-color: #fd7e14;
+    color: white;
+}
+
+.severity-medium {
+    background-color: var(--warning-color);
+    color: #212529;
+}
+
+.severity-low {
+    background-color: var(--success-color);
+    color: white;
+}
+
+/* Progress bars */
+.progress-bar {
+    width: 100%;
+    height: 20px;
+    background-color: #e9ecef;
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 0.5rem 0;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--success-color), var(--info-color));
+    transition: width 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+/* Charts placeholder */
+.chart-container {
+    height: 300px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #666;
+    font-style: italic;
+    margin: 1rem 0;
+}
+
+/* Footer */
+.footer {
+    margin-top: 3rem;
+    padding: 2rem 0;
+    background: var(--dark-color);
+    color: white;
+    text-align: center;
+    border-radius: 8px;
+}
+
+.footer-content {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 2rem;
+    }
+    
+    .nav-tabs {
+        flex-direction: column;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .data-table {
+        font-size: 0.9rem;
+    }
+    
+    .data-table th,
+    .data-table td {
+        padding: 0.5rem;
+    }
+}
+
+/* Loading animation */
+.loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Utility classes */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-muted { color: #666; }
+.font-mono { font-family: 'Courier New', monospace; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>Echo Forge-AI Integrity Dashboard</h1>
+            <p class="subtitle">Multi-Agent Verification System for AI-Native Integrity</p>
+            <div class="lineage-badge">Lineage: RepoReportEcho_092425</div>
+        </header>
+        
+        <!-- Navigation -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" data-tab="overview">Overview</button>
+            <button class="nav-tab" data-tab="vulnerabilities">Vulnerabilities</button>
+            <button class="nav-tab" data-tab="verification">Verification</button>
+            <button class="nav-tab" data-tab="agents">Agents</button>
+            <button class="nav-tab" data-tab="reports">Reports</button>
+        </nav>
+        
+        <!-- Overview Tab -->
+        <div id="overview-content" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number stat-info">3</div>
+                    <div class="stat-label">Total CVEs</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-critical">1</div>
+                    <div class="stat-label">Critical</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-high">1</div>
+                    <div class="stat-label">High</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-medium">1</div>
+                    <div class="stat-label">Medium</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-low">0</div>
+                    <div class="stat-label">Low</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-info">100.0%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">System Overview</h2>
+                </div>
+                <div class="card-content">
+                    <p><strong>Generated:</strong> <span class="timestamp" data-time="2025-09-28T06:04:04.157828">2025-09-28T06:04:04.157828Z</span></p>
+                    <p><strong>Processing Status:</strong> <span class="status-valid">✅ Active</span></p>
+                    <p><strong>Total Manifests Processed:</strong> 3</p>
+                    <p><strong>Valid Manifests:</strong> 3</p>
+                    <p><strong>System Version:</strong> 1.0.0</p>
+                    
+                    <div class="mt-2">
+                        <strong>Verification Progress:</strong>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100.0%">100.0%</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Severity Distribution</h2>
+                </div>
+                <div class="chart-container">
+                    <p>Severity distribution chart would be rendered here with Chart.js</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Vulnerabilities Tab -->
+        <div id="vulnerabilities-content" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">CVE Vulnerability Details</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="cve_id">CVE ID</th>
+                                <th data-sort="severity">Severity</th>
+                                <th data-sort="cvss_score">CVSS Score</th>
+                                <th data-sort="published_date">Published</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0002</td>
+                                <td><span class="severity-badge severity-medium">MEDIUM</span></td>
+                                <td>6.5</td>
+                                <td>2024-02-01</td>
+                                <td>SQL injection vulnerability in web application login form</td>
+                            </tr>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0001</td>
+                                <td><span class="severity-badge severity-high">HIGH</span></td>
+                                <td>8.1</td>
+                                <td>2024-01-15</td>
+                                <td>Buffer overflow vulnerability in example application allows remote code execution</td>
+                            </tr>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0003</td>
+                                <td><span class="severity-badge severity-critical">CRITICAL</span></td>
+                                <td>9.8</td>
+                                <td>2024-03-10</td>
+                                <td>Privilege escalation vulnerability in system service</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Verification Tab -->
+        <div id="verification-content" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Verification Results</h2>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th data-sort="cve_id">CVE ID</th>
+                                <th data-sort="valid">Status</th>
+                                <th data-sort="severity">Severity</th>
+                                <th>Checksum</th>
+                                <th>Issues</th>
+                                <th data-sort="timestamp">Verified</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0002</td>
+                                <td class="status-valid">✅ VALID</td>
+                                <td>MEDIUM</td>
+                                <td class="font-mono text-muted">8bff9972a18e7941...</td>
+                                <td>None</td>
+                                <td>2025-09-28T06:04</td>
+                            </tr>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0001</td>
+                                <td class="status-valid">✅ VALID</td>
+                                <td>HIGH</td>
+                                <td class="font-mono text-muted">bf6944433266d7a3...</td>
+                                <td>None</td>
+                                <td>2025-09-28T06:04</td>
+                            </tr>
+
+                            <tr>
+                                <td class="font-mono">CVE-2024-0003</td>
+                                <td class="status-valid">✅ VALID</td>
+                                <td>CRITICAL</td>
+                                <td class="font-mono text-muted">dad51b36e9c2854a...</td>
+                                <td>None</td>
+                                <td>2025-09-28T06:04</td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Agents Tab -->
+        <div id="agents-content" class="tab-content">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number stat-info">5</div>
+                    <div class="stat-label">Active Agents</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number stat-info">100%</div>
+                    <div class="stat-label">Agent Health</div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Agent Status</h2>
+                </div>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Agent</th>
+                            <th>Status</th>
+                            <th>Specialty</th>
+                            <th>Last Activity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Python Agent</strong></td>
+                            <td class="status-valid">✅ Active</td>
+                            <td>Data processing & statistical analysis</td>
+                            <td>2025-09-28T06:04</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Bash Agent</strong></td>
+                            <td class="status-valid">✅ Active</td>
+                            <td>Unix/Linux system verification</td>
+                            <td>2025-09-28T06:04</td>
+                        </tr>
+                        <tr>
+                            <td><strong>PowerShell Agent</strong></td>
+                            <td class="status-valid">✅ Active</td>
+                            <td>Windows security validation</td>
+                            <td>2025-09-28T06:04</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Markdown Agent</strong></td>
+                            <td class="status-valid">✅ Active</td>
+                            <td>Documentation & human-readable reports</td>
+                            <td>2025-09-28T06:04</td>
+                        </tr>
+                        <tr>
+                            <td><strong>HTML Agent</strong></td>
+                            <td class="status-valid">✅ Active</td>
+                            <td>Web dashboard generation</td>
+                            <td>2025-09-28T06:04</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- Reports Tab -->
+        <div id="reports-content" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Generated Reports</h2>
+                </div>
+                <div class="card-content">
+                    <h3>Available Report Formats</h3>
+                    <ul>
+                        <li><strong>CSV Reports:</strong> Structured data for analysis tools</li>
+                        <li><strong>Markdown Reports:</strong> Human-readable documentation</li>
+                        <li><strong>HTML Reports:</strong> Interactive web visualizations</li>
+                        <li><strong>JSON Reports:</strong> Machine-readable data exports</li>
+                    </ul>
+                    
+                    <h3 class="mt-2">Report Generation Status</h3>
+                    <p>All reports are automatically generated with cryptographic checksums for integrity verification.</p>
+                    
+                    <div class="mt-2">
+                        <strong>Last Report Generation:</strong>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: 100%">Complete</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <h3>Echo Forge-AI Integrity Multi-Agent Verification System</h3>
+                <p>Lineage: RepoReportEcho_092425 | Version: 1.0.0</p>
+                <p>Generated: 2025-09-28T06:04:04.157828Z</p>
+                <p class="mt-1">
+                    This dashboard provides real-time monitoring of the multi-agent verification system.<br>
+                    All data includes cryptographic integrity verification and audit trails.
+                </p>
+            </div>
+        </footer>
+    </div>
+    
+    <script>
+
+// Echo Forge-AI Integrity Dashboard JavaScript
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize dashboard
+    initializeDashboard();
+    
+    // Setup event listeners
+    setupEventListeners();
+    
+    // Load data periodically (every 5 minutes)
+    setInterval(updateDashboard, 300000);
+});
+
+function initializeDashboard() {
+    console.log('Initializing Echo Forge-AI Integrity Dashboard');
+    
+    // Show default tab
+    showTab('overview');
+    
+    // Initialize charts (placeholder for future chart library integration)
+    initializeCharts();
+    
+    // Update timestamps
+    updateTimestamps();
+}
+
+function setupEventListeners() {
+    // Tab navigation
+    const tabButtons = document.querySelectorAll('.nav-tab');
+    tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const tabId = this.getAttribute('data-tab');
+            showTab(tabId);
+        });
+    });
+    
+    // Table sorting (basic implementation)
+    const tableHeaders = document.querySelectorAll('.data-table th[data-sort]');
+    tableHeaders.forEach(header => {
+        header.addEventListener('click', function() {
+            const table = this.closest('table');
+            const column = this.getAttribute('data-sort');
+            const sortOrder = this.getAttribute('data-order') === 'asc' ? 'desc' : 'asc';
+            
+            sortTable(table, column, sortOrder);
+            this.setAttribute('data-order', sortOrder);
+        });
+    });
+}
+
+function showTab(tabId) {
+    // Hide all tab contents
+    const tabContents = document.querySelectorAll('.tab-content');
+    tabContents.forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    // Remove active class from all tabs
+    const tabButtons = document.querySelectorAll('.nav-tab');
+    tabButtons.forEach(button => {
+        button.classList.remove('active');
+    });
+    
+    // Show selected tab content
+    const targetContent = document.getElementById(tabId + '-content');
+    if (targetContent) {
+        targetContent.classList.add('active');
+    }
+    
+    // Activate selected tab button
+    const targetButton = document.querySelector(`[data-tab="${tabId}"]`);
+    if (targetButton) {
+        targetButton.classList.add('active');
+    }
+    
+    console.log(`Switched to tab: ${tabId}`);
+}
+
+function sortTable(table, column, order) {
+    const tbody = table.querySelector('tbody');
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    
+    const columnIndex = Array.from(table.querySelectorAll('th')).findIndex(th => 
+        th.getAttribute('data-sort') === column
+    );
+    
+    if (columnIndex === -1) return;
+    
+    rows.sort((a, b) => {
+        const aValue = a.children[columnIndex].textContent.trim();
+        const bValue = b.children[columnIndex].textContent.trim();
+        
+        // Try to parse as numbers first
+        const aNum = parseFloat(aValue);
+        const bNum = parseFloat(bValue);
+        
+        if (!isNaN(aNum) && !isNaN(bNum)) {
+            return order === 'asc' ? aNum - bNum : bNum - aNum;
+        }
+        
+        // String comparison
+        return order === 'asc' 
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+    });
+    
+    // Reorder rows in DOM
+    tbody.innerHTML = '';
+    rows.forEach(row => tbody.appendChild(row));
+}
+
+function initializeCharts() {
+    // Placeholder for chart initialization
+    // This would integrate with Chart.js or similar library
+    console.log('Chart initialization placeholder');
+}
+
+function updateTimestamps() {
+    const timestampElements = document.querySelectorAll('.timestamp');
+    const now = new Date();
+    const formattedTime = now.toISOString();
+    
+    timestampElements.forEach(element => {
+        if (element.getAttribute('data-time')) {
+            const time = new Date(element.getAttribute('data-time'));
+            element.textContent = formatRelativeTime(time);
+        }
+    });
+}
+
+function formatRelativeTime(date) {
+    const now = new Date();
+    const diffMs = now - date;
+    const diffMins = Math.floor(diffMs / 60000);
+    const diffHours = Math.floor(diffMins / 60);
+    const diffDays = Math.floor(diffHours / 24);
+    
+    if (diffMins < 1) return 'Just now';
+    if (diffMins < 60) return `${diffMins} minutes ago`;
+    if (diffHours < 24) return `${diffHours} hours ago`;
+    return `${diffDays} days ago`;
+}
+
+function updateDashboard() {
+    console.log('Updating dashboard data...');
+    // This would fetch fresh data and update the display
+    updateTimestamps();
+}
+
+// Utility functions
+function showLoading(elementId) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = '<div class="loading"></div>';
+    }
+}
+
+function hideLoading(elementId, content) {
+    const element = document.getElementById(elementId);
+    if (element) {
+        element.innerHTML = content;
+    }
+}
+
+function formatNumber(num) {
+    return num.toLocaleString();
+}
+
+function formatPercentage(value, total) {
+    if (total === 0) return '0%';
+    return ((value / total) * 100).toFixed(1) + '%';
+}
+
+// Export functions for external use
+window.EchoForgeDashboard = {
+    showTab,
+    updateDashboard,
+    formatNumber,
+    formatPercentage
+};
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+# Bash Dialect Processor Summary - RepoReportEcho_092425
+Generated: 2025-09-28T06:01:14Z
+
+## Generated Reports:
+- System Security Report: /home/runner/work/Echo-Forge-AI-Integrity/Echo-Forge-AI-Integrity/reports/bash/system_security_20250928_060114.md
+- CVE Verification Report: /home/runner/work/Echo-Forge-AI-Integrity/Echo-Forge-AI-Integrity/reports/bash/cve_verification_20250928_060114.txt
+- System Monitor Script: /home/runner/work/Echo-Forge-AI-Integrity/Echo-Forge-AI-Integrity/dialects/bash/system_monitor.sh
+
+## Report Checksums:
+- Security Report: fef19516cd035d430f70ad83ad9dcdfb1c4b0206e3f801be40e22e68115482c9
+- CVE Report: a4f989b54198da984398192d57ff68def30f7e5a7a8b8d5318e5fdeecc03cf09
+
+Processing completed successfully by Bash Dialect Processor
+Lineage: RepoReportEcho_092425
