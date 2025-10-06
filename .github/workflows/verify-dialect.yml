@@ -1,0 +1,24 @@
+name: Verify Dialect
+
+on:
+  push:
+    paths:
+      - "docs/DialectManifest.md"
+      - "tests/**"
+
+jobs:
+  verify-dialect:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Verify Dialect Manifest
+        run: |
+          echo "🔍 Checking Dialect Manifest for TODOs..."
+          if grep -q "TODO" docs/DialectManifest.md; then
+            echo "❌ Dialect Manifest contains TODO placeholders."
+            exit 1
+          else
+            echo "✅ Dialect Manifest verified clean."
+          fi
