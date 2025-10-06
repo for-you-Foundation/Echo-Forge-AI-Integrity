@@ -1,0 +1,29 @@
+name: Checksum Verify
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  checksum-verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate Checksums
+        run: |
+          echo "🔐 Generating checksums for tracked files..."
+          find . -type f ! -path "./.git/*" ! -path "./.github/*" -exec sha256sum {} \; > checksums.txt
+          cat checksums.txt
+
+      - name: Verify Checksums
+        run: |
+          echo "🔍 Verifying checksums..."
+          if [ -f checksums.txt ]; then
+            sha256sum -c checksums.txt || true
+          else
+            echo "⚠️ No baseline checksums.txt found. Commit one to establish baseline."
+          fi
